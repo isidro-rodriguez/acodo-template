@@ -1,4 +1,8 @@
+"""Entrada a la aplicación."""
+
+
 def main() -> None:
+    """Función principal."""
     print("¡Boilerplate listo y funcionando!")
 
 
