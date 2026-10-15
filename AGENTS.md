@@ -14,6 +14,7 @@
 
 ```bash
 .
+├── .github/                # Automated config for GitHub
 ├── .local/                 # Private local files, not tracked by git
 ├── scripts/                # Encapsulated utility scripts
 ├── src/                    # Source code
@@ -21,6 +22,7 @@
 ├── .gitattributes          # Git attributes (line endings, binary handling)
 ├── .gitignore              # Git ignore rules
 ├── .pre-commit-config.yaml # Pre-commit hooks configuration
+├── .python-version         # Python version set for this project
 ├── pyproject.toml          # Project metadata, dependencies, and tool config
 ├── README.md               # Minimal informative project overview
 └── AGENTS.md               # Instructions for the agent
@@ -38,9 +40,9 @@ Do not use `pip install` directly.
 
 ```bash
 uv sync
-uvx ruff format .
-uvx ruff check .
-uvx ty check
+uv run ruff format .
+uv run ruff check .
+uv run ty check
 uv run pytest
 uvx pre-commit run --all-files
 uvx pdoc -o docs/api src/<package>
@@ -104,9 +106,9 @@ def sum_numbers(a: int, b: int) -> int:
 - GitHub Actions must work on `ubuntu-latest` and `windows-latest`.
 - Minimum steps:
   - `uv sync`
-  - `uvx ruff format .`
-  - `uvx ruff check .`
-  - `uvx ty check`
+  - `uv run ruff format .`
+  - `uv run ruff check .`
+  - `uv run ty check`
   - `uv run pytest`
 - Use a supported Python version declared in `pyproject.toml`.
 - You may use `astral-sh/setup-uv` to install `uv`.
@@ -127,9 +129,9 @@ def sum_numbers(a: int, b: int) -> int:
 
 A task is done when:
 
-- `uvx ruff format .` leaves no pending changes.
-- `uvx ruff check .` passes without errors.
-- `uvx ty check` passes without errors.
+- `uv run ruff format .` leaves no pending changes.
+- `uv run ruff check .` passes without errors.
+- `uv run ty check` passes without errors.
 - `uv run pytest` passes.
 - `uvx pre-commit run --all-files` passes.
 - Documentation and README are updated if the API or usage changes.
