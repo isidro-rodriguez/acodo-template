@@ -1,6 +1,6 @@
 # PyPlate
 
-Plantilla minimalista para proyectos en **Python >= 3.13**.
+Plantilla de proyectos **Python >= 3.13**.
 
 Está optimizada para el uso de las herramientas de [Astral](https://astral.sh):
 `uv`, `ruff` y `ty`.
