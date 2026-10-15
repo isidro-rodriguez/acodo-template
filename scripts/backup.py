@@ -10,9 +10,7 @@ Uso:
 """
 
 import shutil
-import subprocess
 import tarfile
-import tempfile
 import zipfile
 from enum import StrEnum
 from pathlib import Path
@@ -53,7 +51,6 @@ class Archiver(StrEnum):
 
     ZIP = "zip"
     TAR_GZ = "tar.gz"
-    SEVEN_ZIP = "7z"
 
 
 app = typer.Typer(add_completion=False)

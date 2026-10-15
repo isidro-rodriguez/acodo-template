@@ -1,5 +1,4 @@
 import importlib.util
-import shutil
 import tarfile
 import zipfile
 from pathlib import Path
@@ -51,26 +50,6 @@ def test_tar_gz_with_custom_file(backup: ModuleType, tmp_path: Path) -> None:
     assert result.exit_code == 0
     with tarfile.open(output) as tf:
         assert set(tf.getnames()) == EXPECTED
-
-
-@pytest.mark.skipif(shutil.which("7z") is None, reason="7-Zip no instalado")
-def test_seven_zip_creates_archive(backup: ModuleType, tmp_path: Path) -> None:
-    result = runner.invoke(backup.app, ["--archiver", "7z"])
-
-    assert result.exit_code == 0
-    assert (tmp_path / ".local" / "backup.7z").stat().st_size > 0
-
-
-def test_seven_zip_missing_fails(
-    backup: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    monkeypatch.setattr(backup.shutil, "which", lambda _name: None)
-
-    result = runner.invoke(backup.app, ["--archiver", "7z"])
-
-    assert result.exit_code == 1
-    assert "7-Zip" in result.output
-    assert not (tmp_path / ".local").exists()
 
 
 def test_output_cannot_overwrite_project_file(
