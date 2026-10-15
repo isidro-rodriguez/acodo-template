@@ -29,7 +29,29 @@ uvx pdoc src/pyplate -d google  # Documentación rápida en HTML
 uv run python scripts/backup.py                   # Copia de seguridad en .local/
 uv run python scripts/code_count.py               # Conteo de líneas de código y docstrings
 uv run --group build python scripts/build.py      # Ejecutable único en build/
+uv run python scripts/gh_token.py access          # Token de instalación de una GitHub App
+uv run python scripts/gh_token.py test            # Comprueba el acceso al repositorio
 ```
+
+### 🔑 Token de GitHub App
+
+`scripts/gh_token.py` genera un token de instalación (válido 1 hora) a partir de
+una configuración JSON, por defecto `.local/gh_app.json`:
+
+```json
+{
+  "repository": "owner/repo",
+  "app-id": "123456",
+  "private-key": "private-key.pem",
+  "installation-id": "12345678",
+  "api-url": "https://api.github.com"
+}
+```
+
+`private-key` admite ruta relativa al JSON, ruta absoluta o el PEM embebido.
+Opciones útiles: `--only-token` (imprime solo el token), `--no-clipboard` (no lo
+copia al portapapeles) y `-f ruta.json` (usa otra configuración). Mantén la clave
+privada y el JSON en `.local/`, que git ignora.
 
 ## 📁 Estructura del Proyecto
 
@@ -43,7 +65,8 @@ uv run --group build python scripts/build.py      # Ejecutable único en build/
 ├── scripts/                # Scripts utilitarios encapsulados
 │   ├── backup.py               # Realiza una copia de seguridad del proyecto
 │   ├── build.py                # Empaqueta la aplicación con PyInstaller
-│   └── code_count.py           # Cuenta líneas de código y de docstrings
+│   ├── code_count.py           # Cuenta líneas de código y de docstrings
+│   └── gh_token.py             # Genera tokens de instalación de una GitHub App
 ├── src/                    # Código fuente del proyecto (layout src)
 │   └── pyplate/                # Paquete principal de Python
 │       ├── resources/              # Recursos del paquete (iconos)
