@@ -1,12 +1,12 @@
 """Copia de seguridad manual.
 
 Limpia cachés `__pycache__` y comprime el código fuente en
-`.local/backup.<extensión>` (zip por defecto; también tar.gz y 7z).
+`.local/backup.<extensión>` (zip por defecto; también tar.gz).
 
 Uso:
     uv run python scripts/backup.py
     uv run python scripts/backup.py --archiver tar.gz
-    uv run python scripts/backup.py -a 7z -f ~/copias/pyplate.7z
+    uv run python scripts/backup.py -f ~/copias/pyplate.zip
 """
 
 import shutil
@@ -47,9 +47,6 @@ ROOT_PATTERNS = [
 ]
 """Ficheros en raíz a incluir."""
 
-SEVEN_ZIP_COMMANDS = ("7z", "7zz", "7za")
-"""Ejecutables de 7-Zip que se buscan en el PATH, por orden de preferencia."""
-
 
 class Archiver(StrEnum):
     """Formatos de compresión admitidos."""
@@ -68,17 +65,6 @@ def _fail(message: str) -> NoReturn:
     """Imprime un error y aborta con código 1."""
     err_console.print(f"[bold red]Error:[/] {message}")
     raise typer.Exit(code=1)
-
-
-def _require_seven_zip() -> str:
-    """Devuelve el ejecutable de 7-Zip o aborta si no está instalado."""
-    for name in SEVEN_ZIP_COMMANDS:
-        if executable := shutil.which(name):
-            return executable
-    _fail(
-        f"No se encontró 7-Zip en el PATH (se buscó: {', '.join(SEVEN_ZIP_COMMANDS)}). "
-        "Instálalo o elige otro formato con --archiver zip o --archiver tar.gz."
-    )
 
 
 def _clean_pycache() -> int:
@@ -116,24 +102,6 @@ def _write_tar_gz(output: Path, files: list[Path]) -> None:
             tf.add(ROOT / file, arcname=file.as_posix(), recursive=False)
 
 
-def _write_seven_zip(output: Path, files: list[Path]) -> None:
-    """Crea un 7z con `files` delegando en el ejecutable de 7-Zip."""
-    executable = _require_seven_zip()
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        listing = Path(tmp_dir) / "files.txt"
-        listing.write_text("\n".join(f.as_posix() for f in files), encoding="utf-8")
-        result = subprocess.run(
-            [executable, "a", "-t7z", "-scsUTF-8", str(output), f"@{listing}"],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-    if result.returncode != 0:
-        details = (result.stderr or result.stdout).strip()
-        _fail(f"7-Zip terminó con código {result.returncode}.\n{details}")
-
-
 def _write_archive(archiver: Archiver, output: Path, files: list[Path]) -> None:
     """Crea el archivo comprimido en el formato elegido."""
     match archiver:
@@ -141,31 +109,44 @@ def _write_archive(archiver: Archiver, output: Path, files: list[Path]) -> None:
             _write_zip(output, files)
         case Archiver.TAR_GZ:
             _write_tar_gz(output, files)
-        case Archiver.SEVEN_ZIP:
-            _write_seven_zip(output, files)
 
 
-@app.command(help="Limpia las cachés y crea una copia de seguridad comprimida.")
+# =============================================================================
+#  Opciones de Typer
+# =============================================================================
+
+
+FileOption = Annotated[
+    Path | None,
+    typer.Option(
+        "--file",
+        "-f",
+        dir_okay=False,
+        resolve_path=True,
+        help="Ruta del fichero de salida (por defecto .local/backup.<formato>).",
+    ),
+]
+
+ArchiverOption = Annotated[
+    Archiver,
+    typer.Option(
+        "--archiver",
+        "-a",
+        case_sensitive=False,
+        help="Formato de compresión.",
+    ),
+]
+
+
+# =============================================================================
+#  Comandos de Typer
+# =============================================================================
+
+
+@app.command()
 def main(
-    file: Annotated[
-        Path | None,
-        typer.Option(
-            "--file",
-            "-f",
-            dir_okay=False,
-            resolve_path=True,
-            help="Ruta del fichero de salida (por defecto .local/backup.<formato>).",
-        ),
-    ] = None,
-    archiver: Annotated[
-        Archiver,
-        typer.Option(
-            "--archiver",
-            "-a",
-            case_sensitive=False,
-            help="Formato de compresión.",
-        ),
-    ] = Archiver.ZIP,
+    file: FileOption = None,
+    archiver: ArchiverOption = Archiver.ZIP,
 ) -> None:
     """Limpia las cachés, crea la copia de seguridad e informa del resultado.
 
