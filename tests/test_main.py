@@ -1,6 +1,10 @@
-from python_boilerplate.main import main
+import pytest
+
+from pyplate.main import main
 
 
-def test_main_executes() -> None:
-    """Verifica que la función main se ejecute correctamente."""
+def test_main_prints_greeting(capsys: pytest.CaptureFixture[str]) -> None:
+    """Verifica que `main` imprime el mensaje de bienvenida."""
     main()
+
+    assert "listo y funcionando" in capsys.readouterr().out

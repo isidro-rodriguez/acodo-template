@@ -1,49 +1,68 @@
-# Python Boilerplate
+# PyPlate
 
-Boilerplate moderno y minimalista para proyectos en Python (3.13), optimizado para `uv`, `ruff`, `pytest`, `mypy`.
+Plantilla minimalista para proyectos en **Python >= 3.13**.
 
----
+Está optimizada para el uso de las herramientas de [Astral](https://astral.sh):
+`uv`, `ruff` y `ty`.
 
-## 🚀 Instalación y Configuración
+## 🚀 Instalación
+
+`ruff` y `ty` están en el grupo `dev` de `pyproject.toml`, así que sus versiones
+quedan fijadas en `uv.lock` y coinciden en local y en CI. `pre-commit` y `pdoc`
+se usan con `uvx` (o instálalos globalmente con `uv tool install pre-commit pdoc`).
 
 ```bash
-uv sync     # Crear entorno virtual e instalar dependencias
-uv venv     # Crear manualmente solo el entorno virtual
+uv sync    # Crea el entorno virtual e instala dependencias (grupo dev)
 ```
-
----
 
 ## 🛠️ Comandos Habituales
 
 ```bash
-uv run main                         # Ejecutar el script principal
-uv run ruff check                   # Analizar errores de código
-uv run ruff check --fix             # Lint automático
-uv run ruff format                  # Formateado automático según PEP 8
-uv run ty check                     # Comprobar tipado estricto
-uv run pdoc .\src\ -d google        # Documentación rápida en HTML
-uv run pytest                       # Ejecutar la suite de pruebas unitarias
-uv add --dev pytest-cov             # Añadir una dependencia de desarrollo
-uv remove pytest-cov                # Eliminar una dependencia instalada
-uv run pre-commit run --all-files   # Ejecutar secuencia pre-commit
-uv lock                             # Actualizar `uv.lock`
-```
+uv run pyplate                  # Ejecutar la aplicación (también: python -m pyplate)
+uv run ruff format              # Formateado automático según PEP 8
+uv run ruff check               # Lint automático
+uv run ty check                 # Comprobar tipado estricto
+uv run pytest                   # Ejecutar la suite de pruebas unitarias
+uvx pre-commit run --all-files  # Ejecutar secuencia pre-commit
+uvx pdoc src/pyplate -d google  # Documentación rápida en HTML
 
----
+uv run python scripts/backup.py                   # Copia de seguridad en .local/
+uv run python scripts/code_count.py               # Conteo de líneas de código y docstrings
+uv run --group build python scripts/build.py      # Ejecutable único en build/
+```
 
 ## 📁 Estructura del Proyecto
 
 ```bash
 .
-├── src/
-│   └── python_boilerplate/
-│       ├── __init__.py
-│       └── main.py          # Lógica del punto de entrada
-├── tests/
-│   └── test_main.py         # Pruebas unitarias con pytest
-├── .gitignore               # Lista de ficheros y directorios ignorados para commits
-├── .pre-commit-config.yaml  # Lista de comandos de comprobación previa a un commit
-├── AGENTS.md                # Reglas de conducta y guía para agentes IA
-├── pyproject.toml           # Configuración del proyecto, scripts, ruff y pytest
-└── README.md                # Guía de uso y comandos del proyecto
+├── .github/                # Configuración y automatizaciones de GitHub
+│   ├── workflows/              # Definiciones de flujos de GitHub Actions
+│   │   └── ci.yml                  # Pipeline de integración continua: lint, tipado, tests
+│   └── dependabot.yml          # Actualizaciones automáticas (GitHub Actions y uv)
+├── .local/                 # Ficheros locales privados (ignorado por git; salida de backup.py)
+├── scripts/                # Scripts utilitarios encapsulados
+│   ├── backup.py               # Realiza una copia de seguridad del proyecto
+│   ├── build.py                # Empaqueta la aplicación con PyInstaller
+│   └── code_count.py           # Cuenta líneas de código y de docstrings
+├── src/                    # Código fuente del proyecto (layout src)
+│   └── pyplate/                # Paquete principal de Python
+│       ├── resources/              # Recursos del paquete (iconos)
+│       ├── __init__.py             # Marca pyplate como paquete; expone la versión
+│       ├── __main__.py             # Permite ejecutar con `python -m pyplate`
+│       └── main.py                 # Lógica del punto de entrada
+├── tests/                  # Pruebas del proyecto
+│   └── test_main.py            # Ejemplo de prueba con pytest
+├── .gitattributes          # Reglas de atributos Git: finales de línea, binarios, diffs, etc.
+├── .gitignore              # Lista de ficheros y directorios ignorados para commits
+├── .pre-commit-config.yaml # Lista de comandos de comprobación previa a un commit
+├── .python-version         # Versión de Python fijada para el proyecto
+├── AGENTS.md               # Reglas de conducta y guía para agentes IA
+├── LICENSE                 # Licencia MIT
+├── pyproject.toml          # Configuración del proyecto, scripts, ruff, ty y pytest
+├── README.md               # Guía de uso y comandos del proyecto
+└── uv.lock                 # Versiones exactas de dependencias (se versiona)
 ```
+
+## Licencia
+
+[MIT](LICENSE).

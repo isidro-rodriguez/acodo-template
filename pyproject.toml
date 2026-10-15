@@ -1,47 +1,55 @@
 [project]
-name = "python-boilerplate"
+name = "pyplate"
 dynamic = ["version"]
-description = "Boilerplate moderno para proyectos de Python"
+description = "Plantilla minimalista para proyectos Python"
 readme = "README.md"
-requires-python = ">=3.12"
-authors = [{ name = "Tu Nombre", email = "tu@email.com" }]
-license = { text = "MIT" }
+requires-python = ">=3.13"
+# authors = [{ name = "Tu Nombre", email = "tu@correo.com" }]
+license = "MIT"
+license-files = ["LICENSE"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
-
-[dependency-groups]
-dev = [
-    "pdoc>=16.0.0",
-    "pytest>=8.0.0",
-    "pre-commit>=4.0.0",
-    "ruff>=0.3.0",
-    "ty>=0.0.84",
-]
-
-[project.optional-dependencies]
 
 [project.scripts]
-main = "python_boilerplate.main:main"
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+pyplate = "pyplate.main:main"
 
 [tool.hatch.version]
-path = "src/python_boilerplate/__init__.py"
+path = "src/pyplate/__init__.py"
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["src"]
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+
+# =============================================================================
+#  Dependencias
+# =============================================================================
+
+
+[dependency-groups]
+build = [
+    "pyinstaller>=6.22.3",
+]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.17.1",
+    "ty>=0.0.88",
+]
+
+
+# =============================================================================
+#  Astral Ruff
+# =============================================================================
+
 
 [tool.ruff]
 line-length = 88
-target-version = "py312"
+target-version = "py313"
 
 [tool.ruff.format]
 quote-style = "double"
@@ -49,12 +57,19 @@ indent-style = "space"
 line-ending = "auto"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B", "D"]
+select = ["E", "F", "I", "UP", "B", "D", "SIM", "PTH", "RUF", "C4"]
+
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.ty.environment]
-python-version = "3.12"
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D"]
+
+
+# =============================================================================
+#  Astral ty
+# =============================================================================
+
 
 [tool.ty.analysis]
 strict-equality-semantics = true
@@ -62,3 +77,17 @@ strict-generic-narrowing = true
 
 [tool.ty.rules]
 possibly-unresolved-reference = "error"
+
+
+# =============================================================================
+#  PyTest
+# =============================================================================
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+
+# =============================================================================
+#  Otros
+# =============================================================================
