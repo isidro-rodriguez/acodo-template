@@ -22,7 +22,7 @@ pyplate = "pyplate.main:main"
 path = "src/pyplate/__init__.py"
 
 [build-system]
-requires = ["hatchling>=1.27"]
+requires = ["hatchling>=1.32.4"]
 build-backend = "hatchling.build"
 
 
