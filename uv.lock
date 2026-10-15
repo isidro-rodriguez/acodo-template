@@ -175,6 +175,11 @@ wheels = [
 ]
 
 [[package]]
+name = "irg-utils"
+version = "3.2.0"
+source = { git = "https://github.com/isidro-rodriguez/irg-utils#b045ef9c3227321896b394ff4871e5e82bc1eb2b" }
+
+[[package]]
 name = "macholib"
 version = "1.16.4"
 source = { registry = "https://pypi.org/simple" }
@@ -309,6 +314,9 @@ crypto = [
 [[package]]
 name = "pyplate"
 source = { editable = "." }
+dependencies = [
+    { name = "irg-utils" },
+]
 
 [package.dev-dependencies]
 build = [
@@ -317,18 +325,21 @@ build = [
 dev = [
     { name = "pyjwt", extra = ["crypto"] },
     { name = "pytest" },
+    { name = "rich" },
     { name = "ruff" },
     { name = "ty" },
     { name = "typer" },
 ]
 
 [package.metadata]
+requires-dist = [{ name = "irg-utils", git = "https://github.com/isidro-rodriguez/irg-utils" }]
 
 [package.metadata.requires-dev]
 build = [{ name = "pyinstaller", specifier = ">=6.22.3" }]
 dev = [
     { name = "pyjwt", extras = ["crypto"], specifier = ">=2.15.1" },
     { name = "pytest", specifier = ">=8.0.0" },
+    { name = "rich", specifier = ">=15.0.0" },
     { name = "ruff", specifier = ">=0.17.1" },
     { name = "ty", specifier = ">=0.0.88" },
     { name = "typer", specifier = ">=0.27.3" },

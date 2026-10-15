@@ -27,7 +27,6 @@ Configuración (JSON):
 from __future__ import annotations
 
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -40,6 +39,8 @@ from typing import Annotated, NoReturn
 
 import jwt
 import typer
+from irg_utils import get_env, valid_social_url, valid_url
+from irg_utils.types import SocialLink
 from rich.console import Console
 from rich.table import Table
 
@@ -100,6 +101,15 @@ def _load_config(path: Path) -> dict:
     return cfg
 
 
+def _resolve_api_url(cfg: dict) -> str:
+    """Devuelve la URL base de la API, validada, o la de github.com."""
+    raw = cfg.get("api-url") or DEFAULT_API_URL
+    api_url = str(raw).rstrip("/")
+    if not valid_url(api_url):
+        _fail(f"La clave 'api-url' no es una URL http/https válida: {raw!r}.")
+    return api_url
+
+
 def _load_private_key(raw: str, config_path: Path) -> str:
     """Acepta ruta absoluta, relativa al JSON, o el PEM embebido."""
     candidate = Path(raw).expanduser()
@@ -116,14 +126,26 @@ def _load_private_key(raw: str, config_path: Path) -> str:
 def _normalize_repo(raw: str) -> str:
     """Acepta `owner/repo` o URL de GitHub y devuelve `owner/repo`."""
     value = raw.strip()
+    looks_like_url = (
+        "github.com" in value.casefold() or "://" in value or value.startswith("www.")
+    ) and not value.startswith("git@github.com:")
+    if looks_like_url and not valid_social_url(value, SocialLink.GITHUB_REPO):
+        raise ValueError(
+            f"'{raw}' no parece un repositorio válido (usa 'owner/repo' o la URL)."
+        )
     for prefix in (
         "https://github.com/",
         "http://github.com/",
+        "https://www.github.com/",
+        "http://www.github.com/",
+        "www.github.com/",
+        "github.com/",
         "git@github.com:",
     ):
         if value.startswith(prefix):
             value = value[len(prefix) :]
             break
+    value = value.split("?", 1)[0].split("#", 1)[0]
     if value.endswith(".git"):
         value = value[:-4]
     value = value.strip("/")
@@ -180,7 +202,7 @@ def _request(
 
 def _generate_token(cfg: dict, config_path: Path) -> dict:
     """Pide a GitHub un installation token y devuelve el body completo."""
-    api_url = cfg.get("api-url") or DEFAULT_API_URL
+    api_url = _resolve_api_url(cfg)
     key = _load_private_key(str(cfg["private-key"]), config_path)
     jwt_token = _build_jwt(str(cfg["app-id"]), key)
     return _request(
@@ -201,8 +223,8 @@ def _copy_windows(text: str) -> None:
 
     import ctypes
 
-    CF_UNICODETEXT = 13
-    GMEM_MOVEABLE = 0x0002
+    cf_unicode_text = 13
+    gmem_moveable = 0x0002
 
     kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
     user32 = ctypes.WinDLL("user32", use_last_error=True)
@@ -224,7 +246,7 @@ def _copy_windows(text: str) -> None:
     try:
         if not user32.EmptyClipboard():
             raise RuntimeError("EmptyClipboard falló.")
-        handle = kernel32.GlobalAlloc(GMEM_MOVEABLE, len(data))
+        handle = kernel32.GlobalAlloc(gmem_moveable, len(data))
         if not handle:
             raise RuntimeError("GlobalAlloc falló.")
         locked = kernel32.GlobalLock(handle)
@@ -235,7 +257,7 @@ def _copy_windows(text: str) -> None:
             ctypes.memmove(locked, data, len(data))
         finally:
             kernel32.GlobalUnlock(handle)
-        if not user32.SetClipboardData(CF_UNICODETEXT, handle):
+        if not user32.SetClipboardData(cf_unicode_text, handle):
             kernel32.GlobalFree(handle)
             raise RuntimeError("SetClipboardData falló.")
     finally:
@@ -246,7 +268,7 @@ def _copy_posix(text: str) -> None:
     if sys.platform == "darwin":
         cmd = ["pbcopy"]
     else:
-        if os.environ.get("WAYLAND_DISPLAY") and shutil.which("wl-copy"):
+        if get_env("WAYLAND_DISPLAY") and shutil.which("wl-copy"):
             cmd = ["wl-copy"]
         elif shutil.which("xclip"):
             cmd = ["xclip", "-selection", "clipboard"]
@@ -367,7 +389,7 @@ def test(
         repo_slug = _normalize_repo(str(cfg["repository"]))
         body = _generate_token(cfg, file)
         token = body["token"]
-        api_url = cfg.get("api-url") or DEFAULT_API_URL
+        api_url = _resolve_api_url(cfg)
         info = _request("GET", f"{api_url}/repos/{repo_slug}", token)
     except ValueError as exc:
         err_console.print(f"[bold red]Error:[/] {exc}")

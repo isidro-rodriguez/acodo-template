@@ -12,26 +12,14 @@ icono desde ``<paquete>/resources`` y valida que el nombre sea seguro como
 nombre de fichero en Windows.
 """
 
-import re
 import subprocess
 import sys
 from pathlib import Path
 
+from irg_utils import valid_filename
+
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-
-_INVALID_WINDOWS_CHARS = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
-"""Caracteres no permitidos por Windows en nombres de archivo."""
-
-_RESERVED_WINDOWS_NAMES = {
-    "CON",
-    "PRN",
-    "AUX",
-    "NUL",
-    *(f"COM{i}" for i in range(1, 10)),
-    *(f"LPT{i}" for i in range(1, 10)),
-}
-"""Nombres reservados por Windows."""
 
 
 def discover_package_name(src: Path) -> str:
@@ -99,6 +87,9 @@ def main() -> None:
             icono, o no se produce el binario esperado.
         subprocess.CalledProcessError: Si PyInstaller termina con error.
     """
+    if not valid_filename(PACKAGE_NAME):
+        raise SystemExit("Nombre de paquete inválido para Windows: {PACKAGE_NAME}")
+
     entry = SRC / PACKAGE_NAME / "main.py"
     icon = get_icon(SRC / PACKAGE_NAME / "resources")
     executable_name = get_executable_name(PACKAGE_NAME)
