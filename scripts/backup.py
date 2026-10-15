@@ -154,8 +154,6 @@ def main(
         file: Ruta del fichero de salida. Si se omite, `.local/backup.<formato>`.
         archiver: Formato de compresión. 7z requiere 7-Zip instalado.
     """
-    if archiver is Archiver.SEVEN_ZIP:
-        _require_seven_zip()
     output = (file or BACKUP_DIR / f"backup.{archiver.value}").resolve()
 
     with console.status("Limpiando cachés __pycache__..."):
