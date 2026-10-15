@@ -48,11 +48,6 @@ una configuración JSON, por defecto `.local/gh_app.json`:
 }
 ```
 
-`private-key` admite ruta relativa al JSON, ruta absoluta o el PEM embebido.
-Opciones útiles: `--only-token` (imprime solo el token), `--no-clipboard` (no lo
-copia al portapapeles) y `-f ruta.json` (usa otra configuración). Mantén la clave
-privada y el JSON en `.local/`, que git ignora.
-
 ## 📁 Estructura del Proyecto
 
 ```bash
@@ -61,7 +56,7 @@ privada y el JSON en `.local/`, que git ignora.
 │   ├── workflows/              # Definiciones de flujos de GitHub Actions
 │   │   └── ci.yml                  # Pipeline de integración continua: lint, tipado, tests
 │   └── dependabot.yml          # Actualizaciones automáticas (GitHub Actions y uv)
-├── .local/                 # Ficheros locales privados (ignorado por git; salida de backup.py)
+├── .local/                 # Ficheros locales privados (ignorado por git)
 ├── scripts/                # Scripts utilitarios encapsulados
 │   ├── backup.py               # Realiza una copia de seguridad del proyecto
 │   ├── build.py                # Empaqueta la aplicación con PyInstaller
