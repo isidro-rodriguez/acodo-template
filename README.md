@@ -26,7 +26,8 @@ uv run pytest                   # Ejecutar la suite de pruebas unitarias
 uvx pre-commit run --all-files  # Ejecutar secuencia pre-commit
 uvx pdoc src/pyplate -d google  # Documentación rápida en HTML
 
-uv run python scripts/backup.py                   # Copia de seguridad en .local/
+uv run python scripts/backup.py                   # Copia de seguridad en .local/backup.zip
+uv run python scripts/backup.py -a tar.gz -f ruta  # Otro formato (zip, tar.gz, 7z) y/o ruta
 uv run python scripts/code_count.py               # Conteo de líneas de código y docstrings
 uv run --group build python scripts/build.py      # Ejecutable único en build/
 uv run python scripts/gh_token.py access          # Token de instalación de una GitHub App
