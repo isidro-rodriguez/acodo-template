@@ -196,13 +196,16 @@ def _generate_token(cfg: dict, config_path: Path) -> dict:
 
 
 def _copy_windows(text: str) -> None:
+    if sys.platform != "win32":  # Estrecha el tipo: ty omite el resto en Linux/macOS.
+        raise NotImplementedError("Solo disponible en Windows.")
+
     import ctypes
 
     CF_UNICODETEXT = 13
     GMEM_MOVEABLE = 0x0002
 
-    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)  # ty: ignore[unresolved-attribute]
-    user32 = ctypes.WinDLL("user32", use_last_error=True)  # ty: ignore[unresolved-attribute]
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    user32 = ctypes.WinDLL("user32", use_last_error=True)
 
     kernel32.GlobalAlloc.restype = ctypes.c_void_p
     kernel32.GlobalAlloc.argtypes = [ctypes.c_uint, ctypes.c_size_t]
