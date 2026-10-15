@@ -31,6 +31,10 @@ build-backend = "hatchling.build"
 # =============================================================================
 
 
+dependencies = [
+    "irg-utils",
+]
+
 [dependency-groups]
 build = [
     "pyinstaller>=6.22.3",
@@ -38,10 +42,14 @@ build = [
 dev = [
     "pyjwt[crypto]>=2.15.1",
     "pytest>=8.0.0",
+    "rich>=15.0.0",
     "ruff>=0.17.1",
     "ty>=0.0.88",
     "typer>=0.27.3",
 ]
+
+[tool.uv.sources]
+irg-utils = { git = "https://github.com/isidro-rodriguez/irg-utils" }
 
 
 # =============================================================================

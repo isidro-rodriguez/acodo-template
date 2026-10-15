@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Annotated, NoReturn
 
 import typer
+from irg_utils import parse_size
 from rich.console import Console
 from rich.table import Table
 
@@ -166,12 +167,17 @@ def main(
     with console.status(f"Comprimiendo {len(files)} ficheros ({archiver.value})..."):
         _write_archive(archiver, output, files)
 
-    table = Table(title="Copia de seguridad creada", show_header=False)
-    table.add_column(style="bold")
+    table = Table(
+        title="Copia de seguridad creada",
+        title_style="dim",
+        show_header=False,
+        border_style="dim",
+    )
+    table.add_column(style="cyan")
     table.add_column(overflow="fold")
     table.add_row("Formato", archiver.value)
     table.add_row("Ficheros", str(len(files)))
-    table.add_row("Tamaño", f"{output.stat().st_size:,} bytes")
+    table.add_row("Tamaño", parse_size(output.stat().st_size))
     table.add_row("Ruta", str(output))
     console.print(table)
 

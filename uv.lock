@@ -317,6 +317,7 @@ build = [
 dev = [
     { name = "pyjwt", extra = ["crypto"] },
     { name = "pytest" },
+    { name = "rich" },
     { name = "ruff" },
     { name = "ty" },
     { name = "typer" },
@@ -329,6 +330,7 @@ build = [{ name = "pyinstaller", specifier = ">=6.22.3" }]
 dev = [
     { name = "pyjwt", extras = ["crypto"], specifier = ">=2.15.1" },
     { name = "pytest", specifier = ">=8.0.0" },
+    { name = "rich", specifier = ">=15.0.0" },
     { name = "ruff", specifier = ">=0.17.1" },
     { name = "ty", specifier = ">=0.0.88" },
     { name = "typer", specifier = ">=0.27.3" },
