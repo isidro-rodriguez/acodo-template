@@ -35,7 +35,7 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import Annotated, NoReturn
+from typing import Annotated, Any, NoReturn
 
 import jwt
 import typer
@@ -49,7 +49,7 @@ DEFAULT_CONFIG_FILE = Path(__file__).resolve().parent.parent / ".local" / "gh_ap
 JWT_LIFETIME = 480  # 8 min: margen bajo el máximo de 10 min de GitHub.
 REPO_SLUG_RE = re.compile(r"^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$")
 
-CONFIG_TEMPLATE: dict = {
+CONFIG_TEMPLATE: dict[str, str] = {
     "repository": "owner/repo",
     "app-id": "123456",
     "private-key": "private-key.pem",
@@ -81,7 +81,7 @@ def _fail(message: str) -> NoReturn:
     raise typer.Exit(code=1)
 
 
-def _load_config(path: Path) -> dict:
+def _load_config(path: Path) -> dict[str, Any]:
     """Lee y valida el JSON de configuración."""
     if not path.is_file():
         _fail(f"No se encontró el fichero de configuración: {path}")
@@ -101,7 +101,7 @@ def _load_config(path: Path) -> dict:
     return cfg
 
 
-def _resolve_api_url(cfg: dict) -> str:
+def _resolve_api_url(cfg: dict[str, Any]) -> str:
     """Devuelve la URL base de la API, validada, o la de github.com."""
     raw = cfg.get("api-url") or DEFAULT_API_URL
     api_url = str(raw).rstrip("/")
@@ -112,14 +112,16 @@ def _resolve_api_url(cfg: dict) -> str:
 
 def _load_private_key(raw: str, config_path: Path) -> str:
     """Acepta ruta absoluta, relativa al JSON, o el PEM embebido."""
+    # El PEM se comprueba antes que las rutas: con un PEM largo, `Path.is_file()`
+    # lanza OSError ("File name too long") en Linux y macOS.
+    if "BEGIN" in raw and "PRIVATE KEY" in raw:
+        return raw.replace("\\n", "\n")
     candidate = Path(raw).expanduser()
     if candidate.is_file():
         return candidate.read_text(encoding="utf-8")
     local_candidate = config_path.parent / raw
     if local_candidate.is_file():
         return local_candidate.read_text(encoding="utf-8")
-    if "BEGIN" in raw and "PRIVATE KEY" in raw:
-        return raw.replace("\\n", "\n")
     raise ValueError("La clave privada no es un fichero legible ni un PEM válido.")
 
 
@@ -170,7 +172,9 @@ def _build_jwt(app_id: str, private_key: str) -> str:
             private_key,
             algorithm="RS256",
         )
-    except Exception as exc:
+    # PyJWT lanza InvalidKeyError con claves malformadas, pero AttributeError con
+    # una clave pública y TypeError con una clave cifrada.
+    except (jwt.PyJWTError, AttributeError, TypeError) as exc:
         raise ValueError(f"No se pudo firmar el JWT: {exc}") from exc
 
 
@@ -178,8 +182,8 @@ def _request(
     method: str,
     url: str,
     token: str | None = None,
-    payload: dict | None = None,
-) -> dict:
+    payload: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Realiza una petición JSON a la API de GitHub."""
     data = json.dumps(payload).encode() if payload is not None else None
     request = urllib.request.Request(url, data=data, method=method)
@@ -200,7 +204,7 @@ def _request(
         raise ValueError(f"No se pudo contactar con GitHub: {exc.reason}") from exc
 
 
-def _generate_token(cfg: dict, config_path: Path) -> dict:
+def _generate_token(cfg: dict[str, Any], config_path: Path) -> dict[str, Any]:
     """Pide a GitHub un installation token y devuelve el body completo."""
     api_url = _resolve_api_url(cfg)
     key = _load_private_key(str(cfg["private-key"]), config_path)
@@ -350,7 +354,7 @@ def access(
     no_print: NoPrintOption = False,
 ) -> None:
     """Genera un token de instalación para la GitHub App."""
-    cfg: dict[str, str] = _load_config(file)
+    cfg = _load_config(file)
 
     try:
         repo_slug = _normalize_repo(str(cfg["repository"]))
