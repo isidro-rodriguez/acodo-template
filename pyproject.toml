@@ -15,16 +15,6 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 
-[project.scripts]
-pyplate = "pyplate.main:main"
-
-[tool.hatch.version]
-path = "src/pyplate/__init__.py"
-
-[build-system]
-requires = ["hatchling>=1.32.4"]
-build-backend = "hatchling.build"
-
 
 # =============================================================================
 #  Dependencias
@@ -50,6 +40,22 @@ dev = [
 
 [tool.uv.sources]
 irg-utils = { git = "https://github.com/isidro-rodriguez/irg-utils" }
+
+
+# =============================================================================
+#  Configuración básica
+# =============================================================================
+
+
+[project.scripts]
+pyplate = "pyplate.main:main"
+
+[tool.hatch.version]
+path = "src/pyplate/__init__.py"
+
+[build-system]
+requires = ["hatchling>=1.32.4"]
+build-backend = "hatchling.build"
 
 
 # =============================================================================
