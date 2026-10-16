@@ -18,21 +18,16 @@ uv sync    # Crea el entorno virtual e instala dependencias (grupo dev)
 ## 🛠️ Comandos Habituales
 
 ```bash
-uv run pyplate                  # Ejecutar la aplicación (también: python -m pyplate)
-uv run dev.py --help            # Lista todos los comandos de desarrollo
+uv run pyplate                    # Ejecutar la aplicación (también: python -m pyplate)
 
-uv run dev.py check             # Calidad completa: format, lint, tipado y tests
-uv run dev.py check --lint --types  # Solo algunas (--format --lint --types --tests)
-uv run dev.py api               # Documentación de la API en el navegador (pdoc)
-uv run dev.py api -p ruta -o docs/api   # Otra ruta y/o generar el HTML en un directorio
-
-uv run dev.py backup            # Copia de seguridad en .local/backup.zip
-uv run dev.py code-count        # Conteo de líneas de código y docstrings
-uv run --group build dev.py build   # Empaqueta la aplicación
-uv run dev.py gh-token access   # Token de instalación de una GitHub App
-uv run dev.py gh-token test     # Comprueba el acceso al repositorio
-
-uvx pre-commit run --all-files  # Ejecutar secuencia pre-commit
+uv run dev.py --help              # Lista todos los comandos de desarrollo
+uv run dev.py check               # Calidad completa: format, lint, tipado y tests
+uv run dev.py api                 # Documentación de la API en el navegador (pdoc)
+uv run dev.py backup              # Copia de seguridad en .local/backup.zip
+uv run dev.py code-count          # Conteo de líneas de código y docstrings
+uv run --group build dev.py build # Empaqueta la aplicación
+uv run dev.py gh-token access     # Token de instalación de una GitHub App
+uv run dev.py gh-token test       # Comprueba el acceso al repositorio
 ```
 
 Cada comando de `scripts/` también se puede ejecutar por separado
