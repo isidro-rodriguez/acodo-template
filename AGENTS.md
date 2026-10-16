@@ -105,23 +105,24 @@ def sum_numbers(a: int, b: int) -> int:
 
 - GitHub Actions must work on `ubuntu-latest` and `windows-latest`.
 - Minimum steps:
-  - `uv sync`
-  - `uv run ruff format .`
-  - `uv run ruff check .`
-  - `uv run ty check`
-  - `uv run pytest`
+    - `uv sync`
+    - `uv run ruff format .`
+    - `uv run ruff check .`
+    - `uv run ty check`
+    - `uv run pytest`
 - Use a supported Python version declared in `pyproject.toml`.
 - You may use `astral-sh/setup-uv` to install `uv`.
 
 ## Commits
 
+- Never commit automatically, allways report task success and wait for confirmation.
 - Use Conventional Commits in Spanish.
 - Examples:
-  - `feat: añade cálculo de totales`
-  - `fix: corrige validación de entrada`
-  - `docs: actualiza ejemplos de uso`
-  - `test: cubre casos límite`
-  - `chore: configura pre-commit`
+    - `feat: añade cálculo de totales`
+    - `fix: corrige validación de entrada`
+    - `docs: actualiza ejemplos de uso`
+    - `test: cubre casos límite`
+    - `chore: configura pre-commit`
 - A commit must be atomic and explain the why, not only the what.
 - Do not mix unrelated changes.
 
