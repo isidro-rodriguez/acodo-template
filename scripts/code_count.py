@@ -12,6 +12,8 @@ Uso:
     uv run python scripts/code_count.py --verbose --tree
 """
 
+from __future__ import annotations
+
 import ast
 from collections.abc import Iterator
 from dataclasses import dataclass, field
@@ -45,7 +47,7 @@ class LineStats:
         """Suma total de líneas efectivas (código + docstrings)."""
         return self.code + self.docstrings
 
-    def __add__(self, other: Self) -> Self:
+    def __add__(self, other: Self) -> LineStats:
         """Suma las métricas de dos conteos."""
         return LineStats(
             code=self.code + other.code,
