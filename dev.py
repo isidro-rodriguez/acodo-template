@@ -184,7 +184,7 @@ def check(
         code = _run(step.command)
         results.append((step, code, time.perf_counter() - start))
 
-    table = Table(title="Resultado", title_style="dim", border_style="dim", width=80)
+    table = Table(title="Resultado", title_style="dim", border_style="dim")
     table.add_column("Comprobación", style="cyan")
     table.add_column("Estado")
     table.add_column("Tiempo", justify="right")
