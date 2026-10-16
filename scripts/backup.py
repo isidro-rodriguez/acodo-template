@@ -146,12 +146,7 @@ def main(
     file: FileOption = None,
     archiver: ArchiverOption = Archiver.ZIP,
 ) -> None:
-    """Limpia las cachés, crea la copia de seguridad e informa del resultado.
-
-    Args:
-        file: Ruta del fichero de salida. Si se omite, `.local/backup.<formato>`.
-        archiver: Formato de compresión. 7z requiere 7-Zip instalado.
-    """
+    """Limpia las cachés y crea una copia de seguridad."""
     output = (file or BACKUP_DIR / f"backup.{archiver.value}").resolve()
 
     with console.status("Limpiando cachés __pycache__..."):

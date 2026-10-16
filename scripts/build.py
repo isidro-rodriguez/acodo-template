@@ -115,20 +115,7 @@ def main(
     onefile: OneFileOption = False,
     no_icon: NoIconOption = False,
 ) -> None:
-    """Compila el paquete como ejecutable standalone con PyInstaller.
-
-    Args:
-        output: Directorio de salida del compilado. Si es relativo, se resuelve
-            respecto a la raíz del proyecto.
-        onefile: Si es True, añade ``--onefile`` a PyInstaller.
-        no_icon: Si es True, no se añade icono ni se valida su existencia.
-
-    Raises:
-        SystemExit: Si el nombre no es válido, falta el punto de entrada o el
-            icono (cuando no se usa ``--no-icon``), o no se produce el
-            binario esperado.
-        subprocess.CalledProcessError: Si PyInstaller termina con error.
-    """
+    """Compila el paquete como ejecutable con PyInstaller."""
     if not valid_filename(PACKAGE_NAME):
         _fail(f"Nombre de paquete inválido para Windows: {PACKAGE_NAME}")
 
