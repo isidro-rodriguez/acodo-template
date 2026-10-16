@@ -8,8 +8,8 @@ Está optimizada para el uso de las herramientas de [Astral](https://astral.sh):
 ## 🚀 Instalación
 
 `ruff` y `ty` están en el grupo `dev` de `pyproject.toml`, así que sus versiones
-quedan fijadas en `uv.lock` y coinciden en local y en CI. `pre-commit` y `pdoc`
-se usan con `uvx` (o instálalos globalmente con `uv tool install pre-commit pdoc`).
+quedan fijadas en `uv.lock` y coinciden en local y en CI. `pdoc`se usan con `uvx`
+(o instálalos globalmente con `uv tool install pdoc`).
 
 ```bash
 uv sync    # Crea el entorno virtual e instala dependencias (grupo dev)
@@ -55,26 +55,25 @@ una configuración JSON, por defecto `.local/gh_app.json`:
 ```bash
 .
 ├── .github/                # Configuración y automatizaciones de GitHub
-│   ├── workflows/              # Definiciones de flujos de GitHub Actions
-│   │   └── ci.yml                  # Pipeline de integración continua: lint, tipado, tests
-│   └── dependabot.yml          # Actualizaciones automáticas (GitHub Actions y uv)
+│   ├── workflows/          # Definiciones de flujos de GitHub Actions
+│   │   └── ci.yml          # Pipeline de integración continua: lint, tipado, tests
+│   └── dependabot.yml      # Actualizaciones automáticas (GitHub Actions y uv)
 ├── .local/                 # Ficheros locales privados (ignorado por git)
 ├── scripts/                # Scripts utilitarios encapsulados
-│   ├── backup.py               # Realiza una copia de seguridad del proyecto
-│   ├── build.py                # Empaqueta la aplicación con PyInstaller
-│   ├── code_count.py           # Cuenta líneas de código y de docstrings
-│   └── gh_token.py             # Genera tokens de instalación de una GitHub App
+│   ├── backup.py           # Realiza una copia de seguridad del proyecto
+│   ├── build.py            # Empaqueta la aplicación con PyInstaller
+│   ├── code_count.py       # Cuenta líneas de código y de docstrings
+│   └── gh_token.py         # Genera tokens de instalación de una GitHub App
 ├── src/                    # Código fuente del proyecto (layout src)
-│   └── pyplate/                # Paquete principal de Python
-│       ├── resources/              # Recursos del paquete (iconos)
-│       ├── __init__.py             # Marca pyplate como paquete; expone la versión
-│       ├── __main__.py             # Permite ejecutar con `python -m pyplate`
-│       └── main.py                 # Lógica del punto de entrada
+│   └── pyplate/            # Paquete principal de Python
+│       ├── resources/      # Recursos del paquete (iconos)
+│       ├── __init__.py     # Marca pyplate como paquete; expone la versión
+│       ├── __main__.py     # Permite ejecutar con `python -m pyplate`
+│       └── main.py         # Lógica del punto de entrada
 ├── tests/                  # Pruebas del proyecto
-│   └── test_main.py            # Ejemplo de prueba con pytest
+│   └── test_main.py        # Ejemplo de prueba con pytest
 ├── .gitattributes          # Reglas de atributos Git: finales de línea, binarios, diffs, etc.
 ├── .gitignore              # Lista de ficheros y directorios ignorados para commits
-├── .pre-commit-config.yaml # Lista de comandos de comprobación previa a un commit
 ├── .python-version         # Versión de Python fijada para el proyecto
 ├── AGENTS.md               # Reglas de conducta y guía para agentes IA
 ├── dev.py                  # CLI de desarrollo: scripts, API (pdoc) y control de calidad

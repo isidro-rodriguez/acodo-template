@@ -21,8 +21,8 @@
 ├── tests/                  # Pytest checks
 ├── .gitattributes          # Git attributes (line endings, binary handling)
 ├── .gitignore              # Git ignore rules
-├── .pre-commit-config.yaml # Pre-commit hooks configuration
 ├── .python-version         # Python version set for this project
+├── dev.py                  # Herramientas de desarrollo del proyecto
 ├── pyproject.toml          # Project metadata, dependencies, and tool config
 ├── README.md               # Minimal informative project overview
 └── AGENTS.md               # Instructions for the agent
@@ -106,10 +106,7 @@ def sum_numbers(a: int, b: int) -> int:
 - GitHub Actions must work on `ubuntu-latest` and `windows-latest`.
 - Minimum steps:
     - `uv sync`
-    - `uv run ruff format .`
-    - `uv run ruff check .`
-    - `uv run ty check`
-    - `uv run pytest`
+    - `uv run python dev.py check`
 - Use a supported Python version declared in `pyproject.toml`.
 - You may use `astral-sh/setup-uv` to install `uv`.
 
@@ -122,7 +119,7 @@ def sum_numbers(a: int, b: int) -> int:
     - `fix: corrige validación de entrada`
     - `docs: actualiza ejemplos de uso`
     - `test: cubre casos límite`
-    - `chore: configura pre-commit`
+    - `chore: renombrado de ficheros`
 - A commit must be atomic and explain the why, not only the what.
 - Do not mix unrelated changes.
 
@@ -130,11 +127,7 @@ def sum_numbers(a: int, b: int) -> int:
 
 A task is done when:
 
-- `uv run ruff format .` leaves no pending changes.
-- `uv run ruff check .` passes without errors.
-- `uv run ty check` passes without errors.
-- `uv run pytest` passes.
-- `uvx pre-commit run --all-files` passes.
+- `uv run python dev.py check` passes without errors.
 - Documentation and README are updated if the API or usage changes.
 - The commit is atomic and in Spanish.
 
