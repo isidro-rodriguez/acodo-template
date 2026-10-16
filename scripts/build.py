@@ -39,7 +39,7 @@ def _fail(message: str) -> NoReturn:
     raise typer.Exit(code=1)
 
 
-def _discover_package_name(src: Path) -> str:
+def discover_package_name(src: Path) -> str:
     """Obtiene el nombre del único paquete Python situado en `src`."""
     packages = sorted(
         path.name for path in src.iterdir() if (path / "__init__.py").is_file()
@@ -54,17 +54,17 @@ def _discover_package_name(src: Path) -> str:
     return packages[0]
 
 
-PACKAGE_NAME = _discover_package_name(SRC)
+PACKAGE_NAME = discover_package_name(SRC)
 """Nombre del paquete, tomado del directorio ``src/<paquete>``."""
 
 
-def _get_icon(resources: Path) -> Path:
+def get_icon(resources: Path) -> Path:
     """Devuelve la ruta del icono apropiado para la plataforma actual."""
     filename = "icon.ico" if sys.platform == "win32" else "icon.png"
     return resources / filename
 
 
-def _get_executable_name(package_name: str) -> str:
+def get_executable_name(package_name: str) -> str:
     """Devuelve el nombre del ejecutable generado para la plataforma actual."""
     if sys.platform == "win32":
         return f"{package_name}.exe"
@@ -120,7 +120,7 @@ def main(
         _fail(f"Nombre de paquete inválido para Windows: {PACKAGE_NAME}")
 
     entry = SRC / PACKAGE_NAME / "main.py"
-    executable_name = _get_executable_name(PACKAGE_NAME)
+    executable_name = get_executable_name(PACKAGE_NAME)
 
     output_dir = (ROOT / output).resolve() if not output.is_absolute() else output
     pyinstaller_dir = output_dir / "_pyinstaller"
@@ -149,7 +149,7 @@ def main(
         cmd.append("--onefile")
 
     if not no_icon:
-        icon = _get_icon(SRC / PACKAGE_NAME / "resources")
+        icon = get_icon(SRC / PACKAGE_NAME / "resources")
         if not icon.exists():
             _fail(f"No se encontró el icono: {icon}")
         cmd.append(f"--icon={icon}")
