@@ -135,6 +135,19 @@ def test_load_private_key_accepts_embedded_pem_with_escaped_newlines(
     assert key == private_pem
 
 
+def test_load_private_key_embedded_pem_with_long_base64_run(
+    gh_token: ModuleType, tmp_path: Path
+) -> None:
+    # Más de 255 caracteres seguidos sin "/" harían fallar a `Path.is_file()`.
+    embedded = (
+        "-----BEGIN PRIVATE KEY-----\\n" + "A" * 300 + "\\n-----END PRIVATE KEY-----"
+    )
+
+    key = gh_token._load_private_key(embedded, tmp_path / "gh_app.json")
+
+    assert key == embedded.replace("\\n", "\n")
+
+
 def test_load_private_key_rejects_garbage(gh_token: ModuleType, tmp_path: Path) -> None:
     with pytest.raises(ValueError):
         gh_token._load_private_key("no-existe.pem", tmp_path / "gh_app.json")

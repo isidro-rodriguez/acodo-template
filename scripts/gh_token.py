@@ -112,14 +112,16 @@ def _resolve_api_url(cfg: dict) -> str:
 
 def _load_private_key(raw: str, config_path: Path) -> str:
     """Acepta ruta absoluta, relativa al JSON, o el PEM embebido."""
+    # El PEM se comprueba antes que las rutas: con un PEM largo, `Path.is_file()`
+    # lanza OSError ("File name too long") en Linux y macOS.
+    if "BEGIN" in raw and "PRIVATE KEY" in raw:
+        return raw.replace("\\n", "\n")
     candidate = Path(raw).expanduser()
     if candidate.is_file():
         return candidate.read_text(encoding="utf-8")
     local_candidate = config_path.parent / raw
     if local_candidate.is_file():
         return local_candidate.read_text(encoding="utf-8")
-    if "BEGIN" in raw and "PRIVATE KEY" in raw:
-        return raw.replace("\\n", "\n")
     raise ValueError("La clave privada no es un fichero legible ni un PEM válido.")
 
 
