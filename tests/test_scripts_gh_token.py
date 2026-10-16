@@ -3,6 +3,7 @@ import subprocess
 from collections.abc import Callable
 from pathlib import Path
 from types import ModuleType, SimpleNamespace
+from typing import Any
 
 import jwt
 import pytest
@@ -82,7 +83,9 @@ def test_load_config_rejects_invalid_json(gh_token: ModuleType, tmp_path: Path) 
         ),
     ],
 )
-def test_resolve_api_url(gh_token: ModuleType, cfg: dict, expected: str) -> None:
+def test_resolve_api_url(
+    gh_token: ModuleType, cfg: dict[str, Any], expected: str
+) -> None:
     assert gh_token._resolve_api_url(cfg) == expected
 
 
@@ -168,9 +171,33 @@ def test_build_jwt_is_signed_with_the_private_key(
     assert claims["exp"] - claims["iat"] <= 600  # GitHub exige menos de 10 minutos
 
 
-def test_build_jwt_rejects_invalid_key(gh_token: ModuleType) -> None:
+def test_build_jwt_rejects_garbage_key(gh_token: ModuleType) -> None:
     with pytest.raises(ValueError):
         gh_token._build_jwt("123456", "no-es-una-clave")
+
+
+def test_build_jwt_rejects_public_key(
+    gh_token: ModuleType, rsa_key: rsa.RSAPrivateKey
+) -> None:
+    public_pem = rsa_key.public_key().public_bytes(
+        serialization.Encoding.PEM, serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+
+    with pytest.raises(ValueError):
+        gh_token._build_jwt("123456", public_pem.decode())
+
+
+def test_build_jwt_rejects_encrypted_key(
+    gh_token: ModuleType, rsa_key: rsa.RSAPrivateKey
+) -> None:
+    encrypted = rsa_key.private_bytes(
+        serialization.Encoding.PEM,
+        serialization.PrivateFormat.PKCS8,
+        serialization.BestAvailableEncryption(b"secreto"),
+    )
+
+    with pytest.raises(ValueError):
+        gh_token._build_jwt("123456", encrypted.decode())
 
 
 # ---------------------------------------------------------------------------
