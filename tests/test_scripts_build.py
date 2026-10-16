@@ -88,20 +88,20 @@ def test_cli_exposes_flags(build_module: ModuleType) -> None:
 def test_discover_package_name_single(tmp_path: Path, build_module: ModuleType) -> None:
     (tmp_path / "pkg").mkdir()
     (tmp_path / "pkg" / "__init__.py").write_text("")
-    assert build_module.discover_package_name(tmp_path) == "pkg"
+    assert build_module._discover_package_name(tmp_path) == "pkg"
 
 
 def test_discover_package_name_requires_exactly_one(
     tmp_path: Path, build_module: ModuleType
 ) -> None:
     with pytest.raises(SystemExit):
-        build_module.discover_package_name(tmp_path)
+        build_module._discover_package_name(tmp_path)
 
     for name in ("aaa", "bbb"):
         (tmp_path / name).mkdir()
         (tmp_path / name / "__init__.py").write_text("")
     with pytest.raises(SystemExit):
-        build_module.discover_package_name(tmp_path)
+        build_module._discover_package_name(tmp_path)
 
 
 # ---------------------------------------------------------------------------
@@ -113,18 +113,18 @@ def test_get_executable_name(
     build_module: ModuleType, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(sys, "platform", "win32")
-    assert build_module.get_executable_name("pkg") == "pkg.exe"
+    assert build_module._get_executable_name("pkg") == "pkg.exe"
 
     monkeypatch.setattr(sys, "platform", "linux")
-    assert build_module.get_executable_name("pkg") == "pkg"
+    assert build_module._get_executable_name("pkg") == "pkg"
 
 
 def test_get_icon(build_module: ModuleType, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(sys, "platform", "win32")
-    assert build_module.get_icon(Path("res")).name == "icon.ico"
+    assert build_module._get_icon(Path("res")).name == "icon.ico"
 
     monkeypatch.setattr(sys, "platform", "linux")
-    assert build_module.get_icon(Path("res")).name == "icon.png"
+    assert build_module._get_icon(Path("res")).name == "icon.png"
 
 
 # ---------------------------------------------------------------------------
