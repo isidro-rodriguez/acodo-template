@@ -5,17 +5,17 @@ Uso:
     uv run --group build python scripts/build.py --onefile --output dist
     uv run --group build python scripts/build.py --no-icon
 
-Genera:
-    Windows: <output>/<paquete>.exe
-    Linux/macOS: <output>/<paquete>
+Genera (``<o>`` es el directorio de salida, ``<p>`` el nombre del paquete):
+    Con --onefile: ``<o>/<p>`` (``<o>/<p>.exe`` en Windows).
+    Sin --onefile: carpeta ``<o>/<p>/`` con el ejecutable ``<p>`` (``<p>.exe``
+    en Windows) y sus dependencias.
 
 El nombre del paquete se toma del directorio ``src/<paquete>``. Incluye el
 icono desde ``<paquete>/resources`` y valida que el nombre sea seguro como
 nombre de fichero en Windows.
 """
 
-from __future__ import annotations
-
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -41,21 +41,18 @@ def _fail(message: str) -> NoReturn:
 
 def _discover_package_name(src: Path) -> str:
     """Obtiene el nombre del único paquete Python situado en `src`."""
+    if not src.is_dir():
+        _fail(f"No existe el directorio de código fuente: {src}")
+
     packages = sorted(
         path.name for path in src.iterdir() if (path / "__init__.py").is_file()
     )
 
     if len(packages) != 1:
         found = ", ".join(packages) or "ninguno"
-        raise SystemExit(
-            f"Se esperaba exactamente un paquete en {src} (encontrados: {found})."
-        )
+        _fail(f"Se esperaba exactamente un paquete en {src} (encontrados: {found}).")
 
     return packages[0]
-
-
-PACKAGE_NAME = _discover_package_name(SRC)
-"""Nombre del paquete, tomado del directorio ``src/<paquete>``."""
 
 
 def _get_icon(resources: Path) -> Path:
@@ -72,6 +69,25 @@ def _get_executable_name(package_name: str) -> str:
     return package_name
 
 
+def _remove(path: Path) -> None:
+    """Elimina un fichero o directorio si existe."""
+    if path.is_dir():
+        shutil.rmtree(path)
+    else:
+        path.unlink(missing_ok=True)
+
+
+def _run_pyinstaller(cmd: list[str]) -> None:
+    """Ejecuta PyInstaller y aborta con un mensaje claro si falla."""
+    try:
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as exc:
+        _fail(
+            f"PyInstaller terminó con código {exc.returncode}. "
+            "¿Ejecutas con `uv run --group build`?"
+        )
+
+
 # =============================================================================
 #  Opciones de Typer
 # =============================================================================
@@ -83,7 +99,7 @@ OutputOption = Annotated[
         "-o",
         file_okay=False,
         resolve_path=True,
-        help="Directorio de salida del compilado (por defecto build).",
+        help="Directorio de salida del compilado (por defecto build en la raíz).",
     ),
 ]
 
@@ -111,23 +127,21 @@ NoIconOption = Annotated[
 
 @app.command()
 def main(
-    output: OutputOption = Path("build"),
+    output: OutputOption = ROOT / "build",
     onefile: OneFileOption = False,
     no_icon: NoIconOption = False,
 ) -> None:
     """Compila el paquete como ejecutable con PyInstaller."""
-    if not valid_filename(PACKAGE_NAME):
-        _fail(f"Nombre de paquete inválido para Windows: {PACKAGE_NAME}")
+    package_name = _discover_package_name(SRC)
+    if not valid_filename(package_name):
+        _fail(f"Nombre de paquete inválido para Windows: {package_name}")
 
-    entry = SRC / PACKAGE_NAME / "main.py"
-    executable_name = _get_executable_name(PACKAGE_NAME)
-
-    output_dir = (ROOT / output).resolve() if not output.is_absolute() else output
-    pyinstaller_dir = output_dir / "_pyinstaller"
-    final_path = output_dir / executable_name
-
+    entry = SRC / package_name / "main.py"
     if not entry.exists():
         _fail(f"No se encontró el punto de entrada: {entry}")
+
+    executable_name = _get_executable_name(package_name)
+    pyinstaller_dir = output / "_pyinstaller"
 
     cmd = [
         sys.executable,
@@ -136,9 +150,9 @@ def main(
         "--noconfirm",
         "--clean",
         "--name",
-        PACKAGE_NAME,
+        package_name,
         "--console",
-        f"--collect-all={PACKAGE_NAME}",
+        f"--collect-all={package_name}",
         f"--paths={SRC}",
         f"--distpath={pyinstaller_dir / 'dist'}",
         f"--workpath={pyinstaller_dir / 'work'}",
@@ -149,7 +163,7 @@ def main(
         cmd.append("--onefile")
 
     if not no_icon:
-        icon = _get_icon(SRC / PACKAGE_NAME / "resources")
+        icon = _get_icon(SRC / package_name / "resources")
         if not icon.exists():
             _fail(f"No se encontró el icono: {icon}")
         cmd.append(f"--icon={icon}")
@@ -158,19 +172,25 @@ def main(
     cmd.append(str(entry))
 
     console.print(f"Plataforma: {sys.platform}")
-    console.print(f"Paquete:    {PACKAGE_NAME}")
+    console.print(f"Paquete:    {package_name}")
     console.print("Compilando con PyInstaller... (esto puede tardar algunos minutos)")
 
-    subprocess.run(cmd, check=True)
+    _run_pyinstaller(cmd)
 
-    produced = pyinstaller_dir / "dist" / executable_name
-
+    # Con --onefile PyInstaller genera un fichero; sin él, una carpeta con el
+    # ejecutable dentro.
+    artifact_name = executable_name if onefile else package_name
+    produced = pyinstaller_dir / "dist" / artifact_name
     if not produced.exists():
         _fail(f"No se encontró {produced}. Revisa la salida de PyInstaller.")
 
-    output_dir.mkdir(parents=True, exist_ok=True)
+    final_path = output / artifact_name
+    output.mkdir(parents=True, exist_ok=True)
+    _remove(final_path)
     produced.replace(final_path)
-    console.print(f"[green]✓[/] Listo: {final_path}")
+
+    executable = final_path if onefile else final_path / executable_name
+    console.print(f"[green]✓[/] Listo: {executable}")
 
 
 if __name__ == "__main__":
