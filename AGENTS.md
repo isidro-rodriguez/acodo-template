@@ -44,8 +44,7 @@ uv run ruff format .
 uv run ruff check .
 uv run ty check
 uv run pytest
-uvx pre-commit run --all-files
-uvx pdoc -o docs/api src/<package>
+uv run python dev.py check # runs ruff, ty and pytest at once
 ```
 
 If a tool is missing, ask developer:
@@ -68,6 +67,7 @@ uv add --dev <tool>
 ## Code rules
 
 - Follow PEP 8 and Pythonic style with strict type annotations.
+- User `irg-utils` as utility library.
 - Use Google-style docstrings for public identifiers: complete, with examples when they add value.
 - For private identifiers, use brief docstrings.
 - Do not repeat obvious things in docstrings or add unnecessary examples.
