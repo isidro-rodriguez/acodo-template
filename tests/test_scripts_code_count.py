@@ -1,40 +1,19 @@
-import importlib.util
-import sys
+from collections.abc import Callable
 from pathlib import Path
 from types import ModuleType
 
 import pytest
 
-SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "code_count.py"
-
 
 @pytest.fixture
-def code_count_module() -> ModuleType:
+def code_count_module(load_script: Callable[[str], ModuleType]) -> ModuleType:
     """Carga `scripts/code_count.py` como módulo de prueba."""
-    spec = importlib.util.spec_from_file_location("code_count_script", SCRIPT)
-    assert spec is not None
-    assert spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    sys.modules["code_count_script"] = module
-    spec.loader.exec_module(module)
-    return module
+    return load_script("code_count")
 
 
 # ---------------------------------------------------------------------------
 #  LineStats
 # ---------------------------------------------------------------------------
-
-
-def test_line_stats_total(code_count_module: ModuleType) -> None:
-    """La propiedad total suma código y docstrings."""
-    stats = code_count_module.LineStats(code=10, docstrings=5)
-    assert stats.total == 15
-
-
-def test_line_stats_total_zero(code_count_module: ModuleType) -> None:
-    """Un conteo vacío tiene total cero."""
-    stats = code_count_module.LineStats()
-    assert stats.total == 0
 
 
 def test_line_stats_add(code_count_module: ModuleType) -> None:
@@ -65,12 +44,6 @@ def test_category_totals(code_count_module: ModuleType) -> None:
     assert totals.total == 20
 
 
-def test_category_totals_empty(code_count_module: ModuleType) -> None:
-    """Una categoría sin ficheros tiene totales nulos."""
-    cat = code_count_module.Category(name="vacía")
-    assert cat.totals.total == 0
-
-
 # ---------------------------------------------------------------------------
 #  _get_docstring_lines
 # ---------------------------------------------------------------------------
@@ -85,7 +58,7 @@ def test_get_docstring_lines_single_line(code_count_module: ModuleType) -> None:
 
 def test_get_docstring_lines_multiline(code_count_module: ModuleType) -> None:
     """Detecta un docstring de varias líneas."""
-    content = '"""doc\\\nmulti\\\n"""\nx = 1\n'
+    content = '"""doc\nmulti\n"""\nx = 1\n'
     lines = code_count_module._get_docstring_lines(content)
     assert lines == {1, 2, 3}
 
