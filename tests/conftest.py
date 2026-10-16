@@ -7,16 +7,20 @@ from types import ModuleType
 import pytest
 from typer.testing import CliRunner
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS = ROOT / "scripts"
 
 
 @pytest.fixture
-def load_script(monkeypatch: pytest.MonkeyPatch) -> Callable[[str], ModuleType]:
-    """Devuelve una función que importa `scripts/<nombre>.py` como módulo aislado."""
+def load_script(monkeypatch: pytest.MonkeyPatch) -> Callable[..., ModuleType]:
+    """Devuelve una función que importa `<carpeta>/<nombre>.py` como módulo aislado.
 
-    def _load(name: str) -> ModuleType:
+    Por defecto carga desde `scripts/`; con `folder=ROOT` carga ficheros de la raíz.
+    """
+
+    def _load(name: str, folder: Path = SCRIPTS) -> ModuleType:
         spec = importlib.util.spec_from_file_location(
-            f"script_{name}", SCRIPTS / f"{name}.py"
+            f"script_{name}", folder / f"{name}.py"
         )
         assert spec is not None
         assert spec.loader is not None

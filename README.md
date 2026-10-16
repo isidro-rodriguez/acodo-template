@@ -19,19 +19,26 @@ uv sync    # Crea el entorno virtual e instala dependencias (grupo dev)
 
 ```bash
 uv run pyplate                  # Ejecutar la aplicación (también: python -m pyplate)
-uv run ruff format              # Formateado automático según PEP 8
-uv run ruff check               # Lint automático
-uv run ty check                 # Comprobar tipado estricto
-uv run pytest                   # Ejecutar la suite de pruebas unitarias
-uvx pre-commit run --all-files  # Ejecutar secuencia pre-commit
-uvx pdoc src/pyplate -d google  # Documentación rápida en HTML
+uv run dev.py --help            # Lista todos los comandos de desarrollo
 
-uv run python scripts/backup.py               # Copia de seguridad en .local/backup.zip
-uv run python scripts/code_count.py           # Conteo de líneas de código y docstrings
-uv run --group build python scripts/build.py  # Empaqueta la aplicación
-uv run python scripts/gh_token.py access      # Token de instalación de una GitHub App
-uv run python scripts/gh_token.py test        # Comprueba el acceso al repositorio
+uv run dev.py check             # Calidad completa: format, lint, tipado y tests
+uv run dev.py check --lint --types  # Solo algunas (--format --lint --types --tests)
+uv run dev.py api               # Documentación de la API en el navegador (pdoc)
+uv run dev.py api -p ruta -o docs/api   # Otra ruta y/o generar el HTML en un directorio
+
+uv run dev.py backup            # Copia de seguridad en .local/backup.zip
+uv run dev.py code-count        # Conteo de líneas de código y docstrings
+uv run --group build dev.py build   # Empaqueta la aplicación
+uv run dev.py gh-token access   # Token de instalación de una GitHub App
+uv run dev.py gh-token test     # Comprueba el acceso al repositorio
+
+uvx pre-commit run --all-files  # Ejecutar secuencia pre-commit
 ```
+
+Cada comando de `scripts/` también se puede ejecutar por separado
+(`uv run python scripts/backup.py`). `check` equivale a ejecutar
+`ruff format`, `ruff check --fix`, `ty check` y `pytest`, sin detenerse en el
+primer fallo y con un resumen final.
 
 ### 🔑 Token de GitHub App
 
@@ -75,6 +82,7 @@ una configuración JSON, por defecto `.local/gh_app.json`:
 ├── .pre-commit-config.yaml # Lista de comandos de comprobación previa a un commit
 ├── .python-version         # Versión de Python fijada para el proyecto
 ├── AGENTS.md               # Reglas de conducta y guía para agentes IA
+├── dev.py                  # CLI de desarrollo: scripts, API (pdoc) y control de calidad
 ├── LICENSE                 # Licencia MIT
 ├── pyproject.toml          # Configuración del proyecto, scripts, ruff, ty y pytest
 ├── README.md               # Guía de uso y comandos del proyecto
