@@ -16,16 +16,14 @@
 .
 ├── .github/                # Automated config for GitHub
 ├── .local/                 # Private local files, not tracked by git
-├── scripts/                # Encapsulated utility scripts
 ├── src/                    # Source code
 ├── tests/                  # Pytest checks
 ├── .gitattributes          # Git attributes (line endings, binary handling)
 ├── .gitignore              # Git ignore rules
 ├── .python-version         # Python version set for this project
-├── dev.py                  # Herramientas de desarrollo del proyecto
+├── AGENTS.md               # Instructions for the agent
 ├── pyproject.toml          # Project metadata, dependencies, and tool config
-├── README.md               # Minimal informative project overview
-└── AGENTS.md               # Instructions for the agent
+└── README.md               # Minimal informative project overview
 ```
 
 - Every `__init__.py` must include a short docstring describing the module or package.
@@ -44,7 +42,6 @@ uv run ruff format .
 uv run ruff check .
 uv run ty check
 uv run pytest
-uv run python dev.py check # runs ruff, ty and pytest at once
 ```
 
 If a tool is missing, ask developer:
@@ -106,7 +103,10 @@ def sum_numbers(a: int, b: int) -> int:
 - GitHub Actions must work on `ubuntu-latest` and `windows-latest`.
 - Minimum steps:
     - `uv sync`
-    - `uv run python dev.py check`
+    - `uv run ruff format .`
+    - `uv run ruff check .`
+    - `uv run ty check`
+    - `uv run pytest`
 - Use a supported Python version declared in `pyproject.toml`.
 - You may use `astral-sh/setup-uv` to install `uv`.
 

@@ -5,6 +5,11 @@ Plantilla de proyectos **Python >= 3.13**.
 Está optimizada para el uso de las herramientas de [Astral](https://astral.sh):
 `uv`, `ruff` y `ty`.
 
+Utiliza también las herramientas del framework Acodo:
+
+- [Acodo CLI](https://github.com/isidro-rodriguez/acodo-cli)
+- [Acodo utils](https://github.com/isidro-rodriguez/acodo-utils)
+
 ## 🚀 Instalación
 
 `ruff` y `ty` están en el grupo `dev` de `pyproject.toml`, así que sus versiones
@@ -18,16 +23,17 @@ uv sync    # Crea el entorno virtual e instala dependencias (grupo dev)
 ## 🛠️ Comandos Habituales
 
 ```bash
-uv run pyplate                    # Ejecutar la aplicación (también: python -m pyplate)
+# Ejecutar la aplicación (también: python -m acodo_template)
+uv run main
 
-uv run dev.py --help              # Lista todos los comandos de desarrollo
-uv run dev.py check               # Calidad completa: format, lint, tipado y tests
-uv run dev.py api                 # Documentación de la API en el navegador (pdoc)
-uv run dev.py backup              # Copia de seguridad en .local/backup.zip
-uv run dev.py code-count          # Conteo de líneas de código y docstrings
-uv run --group build dev.py build # Empaqueta la aplicación
-uv run dev.py gh-token access     # Token de instalación de una GitHub App
-uv run dev.py gh-token test       # Comprueba el acceso al repositorio
+# Tooling de control de calidad
+uv run ruff format --check # Formato
+uv run ruff check # Lint
+uv run ty check # Comprobación de tipos
+uv run pytest # Pruebas 
+
+# Ejecutar el CLI de Acodo
+uv run acodo
 ```
 
 Cada comando de `scripts/` también se puede ejecutar por separado
@@ -59,16 +65,11 @@ una configuración JSON, por defecto `.local/gh_app.json`:
 │   │   └── ci.yml          # Pipeline de integración continua: lint, tipado, tests
 │   └── dependabot.yml      # Actualizaciones automáticas (GitHub Actions y uv)
 ├── .local/                 # Ficheros locales privados (ignorado por git)
-├── scripts/                # Scripts utilitarios encapsulados
-│   ├── backup.py           # Realiza una copia de seguridad del proyecto
-│   ├── build.py            # Empaqueta la aplicación con PyInstaller
-│   ├── code_count.py       # Cuenta líneas de código y de docstrings
-│   └── gh_token.py         # Genera tokens de instalación de una GitHub App
 ├── src/                    # Código fuente del proyecto (layout src)
-│   └── pyplate/            # Paquete principal de Python
+│   └── acodo_template/            # Paquete principal de Python
 │       ├── resources/      # Recursos del paquete (iconos)
-│       ├── __init__.py     # Marca pyplate como paquete; expone la versión
-│       ├── __main__.py     # Permite ejecutar con `python -m pyplate`
+│       ├── __init__.py     # Marca acodo_template como paquete; expone la versión
+│       ├── __main__.py     # Permite ejecutar con `python -m acodo_template`
 │       └── main.py         # Lógica del punto de entrada
 ├── tests/                  # Pruebas del proyecto
 │   └── test_main.py        # Ejemplo de prueba con pytest
@@ -76,7 +77,6 @@ una configuración JSON, por defecto `.local/gh_app.json`:
 ├── .gitignore              # Lista de ficheros y directorios ignorados para commits
 ├── .python-version         # Versión de Python fijada para el proyecto
 ├── AGENTS.md               # Reglas de conducta y guía para agentes IA
-├── dev.py                  # CLI de desarrollo: scripts, API (pdoc) y control de calidad
 ├── LICENSE                 # Licencia MIT
 ├── pyproject.toml          # Configuración del proyecto, scripts, ruff, ty y pytest
 ├── README.md               # Guía de uso y comandos del proyecto

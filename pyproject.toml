@@ -1,5 +1,5 @@
 [project]
-name = "pyplate"
+name = "acodo-template"
 dynamic = ["version"]
 description = "Plantilla minimalista para proyectos Python"
 readme = "README.md"
@@ -44,10 +44,10 @@ acodo-utils = { git = "https://github.com/isidro-rodriguez/acodo-utils" }
 
 
 [project.scripts]
-pyplate = "pyplate.main:main"
+main = "acodo_template.main:main"
 
 [tool.hatch.version]
-path = "src/pyplate/__init__.py"
+path = "src/acodo_template/__init__.py"
 
 [build-system]
 requires = ["hatchling>=1.32.4"]
