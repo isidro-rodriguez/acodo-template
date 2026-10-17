@@ -4,8 +4,8 @@ requires-python = ">=3.13"
 
 [[package]]
 name = "acodo-cli"
-version = "0.1.0"
-source = { git = "https://github.com/isidro-rodriguez/acodo-cli#3c8133bd299d38efbae24aa4babcf640c5acc4f1" }
+version = "0.2.0"
+source = { git = "https://github.com/isidro-rodriguez/acodo-cli#5717e438993c62e3dde9dc81df189a7bf4a175de" }
 dependencies = [
     { name = "acodo-utils" },
     { name = "pyjwt", extra = ["crypto"] },
