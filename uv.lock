@@ -41,8 +41,8 @@ dev = [
 
 [[package]]
 name = "acodo-utils"
-version = "4.0.0"
-source = { git = "https://github.com/isidro-rodriguez/acodo-utils#1b481c718e76494a3dfdf394f69309f55f8eaf2c" }
+version = "4.1.1"
+source = { git = "https://github.com/isidro-rodriguez/acodo-utils#8c35da4a30439fa1f58d2b22b8fc9977d46fccf5" }
 
 [[package]]
 name = "annotated-doc"
