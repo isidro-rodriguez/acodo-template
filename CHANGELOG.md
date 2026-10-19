@@ -5,6 +5,13 @@ Todos los cambios relevantes de `acodo-template` se documentan en este fichero.
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y el
 proyecto usa [Versionado Semántico](https://semver.org/lang/es/).
 
+## [0.2.2] - 2026-10-19
+
+### Changed
+
+- CI: `actions/checkout` 4 → 7 y `astral-sh/setup-uv` 6 → 7.
+- Build: el requisito de `uv_build` pasa a `>=0.11.7,<0.14.0`.
+
 ## [0.2.1] - 2026-10-19
 
 ### Fixed
