@@ -33,11 +33,11 @@ jobs:
         with:
           version: "0.11.x"
           enable-cache: true
-          cache-dependency-glob: "uv.lock"
+          cache-dependency-glob: "pyproject.toml"
           python-version: ${{ matrix.python-version }}
 
-      - name: Sincronizar dependencias (falla si el lock deriva)
-        run: uv sync --all-packages --locked --dev
+      - name: Sincronizar dependencias
+        run: uv sync --dev
 
       - name: Comprobar formato (Ruff)
         run: uv run ruff format --check .
@@ -49,7 +49,7 @@ jobs:
         run: uv run ty check --error-on-warning
 
       - name: Tests (pytest + cobertura)
-        run: uv run pytest --cov=packages --cov-report=xml --cov-report=term-missing
+        run: uv run pytest --cov=src --cov-report=xml --cov-report=term-missing
 
       - name: Subir cobertura a Codecov
         if: matrix.os == 'ubuntu-latest'

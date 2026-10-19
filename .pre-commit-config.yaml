@@ -45,7 +45,7 @@ repos:
       # Suite completa con cobertura al hacer push.
       - id: pytest-cov
         name: pytest (con cobertura)
-        entry: uv run pytest --cov=packages --cov-report=term-missing
+        entry: uv run pytest --cov=src --cov-report=term-missing
         language: system
         pass_filenames: false
         always_run: true

@@ -4,9 +4,9 @@ Plantilla mínima para proyectos **Python >= 3.13**. Es una base independiente q
 personaliza para iniciar un nuevo proyecto Python con las herramientas de
 [Astral](https://astral.sh) (`uv`, `ruff` y `ty`).
 
-Depende de `acodo-framework` y usa `acodo-cli` en desarrollo. En un repositorio independiente
-ambos deben estar disponibles en PyPI (o referenciarse como dependencias git en el
-`pyproject.toml`, ya que aquí se declaran como miembros del workspace).
+Depende de `acodo-framework` y usa `acodo-cli` en desarrollo; ambos se instalan desde PyPI.
+El repositorio se genera automáticamente desde el monorepo
+[acodo](https://github.com/isidro-rodriguez/acodo) en cada versión: los cambios se hacen allí.
 
 ## 🚀 Instalación
 
@@ -27,7 +27,8 @@ python -m acodo_template
 
 ### Comandos de calidad
 
-El `pyproject.toml` incluye la configuración de Ruff, ty y pytest. Ejecuta:
+El `pyproject.toml` incluye la configuración de Ruff, ty y pytest y sus dependencias de
+desarrollo. Ejecuta:
 
 ```bash
 uv run ruff format .
@@ -77,6 +78,13 @@ El `pyproject.toml` incluye la configuración de:
 - **Entry point**: `main = "acodo_template.main:main"`
 
 Personalízala según las necesidades de tu proyecto.
+
+## Enlaces
+
+- Repositorio de la plantilla: <https://github.com/isidro-rodriguez/acodo-template>
+- Monorepo del que se genera: <https://github.com/isidro-rodriguez/acodo>
+- Documentación de Acodo: <https://isidro-rodriguez.github.io/acodo/>
+- PyPI: [`acodo-framework`](https://pypi.org/project/acodo-framework/) · [`acodo-cli`](https://pypi.org/project/acodo-cli/)
 
 ## Licencia
 

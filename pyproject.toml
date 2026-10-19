@@ -1,6 +1,6 @@
 [project]
 name = "acodo-template"
-version = "0.2.0"
+version = "0.2.1"
 description = "Plantilla minimalista para proyectos Python"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -22,14 +22,16 @@ dependencies = [
 [dependency-groups]
 dev = [
     "acodo-cli",
+    "pre-commit>=4.7.0",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.1",
+    "ty>=0.0.89",
 ]
 
 [project.scripts]
 main = "acodo_template.main:main"
 
-[tool.uv.sources]
-acodo-cli = { workspace = true }
-acodo-framework = { workspace = true }
 
 [tool.uv.build-backend]
 module-name = "acodo_template"
@@ -37,3 +39,41 @@ module-name = "acodo_template"
 [build-system]
 requires = ["uv_build>=0.11.7,<0.12.0"]
 build-backend = "uv_build"
+
+
+# ---------------------------------------------------------------------------
+# Herramientas (rutas relativas a este proyecto)
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM", "C4", "PERF", "PTH", "RUF", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+known-first-party = ["acodo_template"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D"]
+
+[tool.ty.environment]
+python-version = "3.13"
+
+[tool.ty.src]
+include = ["src", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--import-mode=importlib", "--doctest-modules"]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+omit = ["*/tests/*", "*/__init__.py"]
+
+[tool.coverage.report]
+exclude_also = ["pragma: no cover", "if TYPE_CHECKING:", "if __name__ == .__main__.:"]

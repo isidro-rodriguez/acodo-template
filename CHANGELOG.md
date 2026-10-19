@@ -5,6 +5,19 @@ Todos los cambios relevantes de `acodo-template` se documentan en este fichero.
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y el
 proyecto usa [Versionado Semántico](https://semver.org/lang/es/).
 
+## [0.2.1] - 2026-10-19
+
+### Fixed
+
+- El CI del repositorio independiente fallaba: usaba `uv sync --all-packages --locked` (sin `uv.lock`) y `--cov=packages`; ahora usa `uv sync --dev` y `--cov=src`.
+- `pyproject.toml` declaraba `acodo-cli`/`acodo-framework` con `workspace = true`, inválido fuera del monorepo; el workflow de publicación elimina `[tool.uv.sources]` al sincronizar el repositorio.
+
+### Changed
+
+- El grupo `dev` incluye `pytest`, `pytest-cov`, `ruff`, `ty` y `pre-commit`, y el `pyproject.toml` lleva la configuración de Ruff, ty, pytest y coverage que el README ya anunciaba.
+- Hook `pytest-cov` de pre-push apunta a `src`.
+- README: sección «Enlaces» y aclaración de que el repositorio se genera desde el monorepo.
+
 ## [0.2.0] - 2026-10-19
 
 ### Added
