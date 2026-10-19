@@ -1,0 +1,39 @@
+[project]
+name = "acodo-template"
+version = "0.2.0"
+description = "Plantilla minimalista para proyectos Python"
+readme = "README.md"
+requires-python = ">=3.13"
+license = "MIT"
+license-files = ["LICENSE"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Typing :: Typed",
+]
+
+dependencies = [
+    "acodo-framework",
+]
+
+[dependency-groups]
+dev = [
+    "acodo-cli",
+]
+
+[project.scripts]
+main = "acodo_template.main:main"
+
+[tool.uv.sources]
+acodo-cli = { workspace = true }
+acodo-framework = { workspace = true }
+
+[tool.uv.build-backend]
+module-name = "acodo_template"
+
+[build-system]
+requires = ["uv_build>=0.11.7,<0.12.0"]
+build-backend = "uv_build"
