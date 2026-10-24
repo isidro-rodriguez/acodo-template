@@ -10,18 +10,15 @@
 - This file, `AGENTS.md`, is written in English so the agent does not need to translate
   instructions.
 
-## Expected structure (standalone Python project with uv)
+## Expected structure (standalone Python template with uv)
 
 ```bash
 .
 ├── .github/                # GitHub Actions CI
 ├── .pre-commit-config.yaml # pre-commit/pre-push hooks (ruff, ty, pytest, zensical)
-├── .python-version         # Python version pin
 ├── AGENTS.md               # This file
-├── CHANGELOG.md            # Keep a Changelog (Spanish)
 ├── LICENSE                 # MIT
 ├── pyproject.toml          # Project: deps, build, tools (ruff, ty, pytest, uv)
-├── py.typed                # PEP 561 marker
 ├── README.md               # Project documentation
 ├── src/
 │   └── <package>/          # Source code (rename "acodo_template" to your name)
@@ -35,12 +32,12 @@
 
 - Every `__init__.py` must include a short docstring describing the module or package.
 - The project uses `uv` as dependency manager and build backend.
-- `acodo-framework` is a runtime dependency; `acodo-cli` is in the `dev` dependency group.
+- `acodo` is a library dependency.
 
 ## Project rules (load-bearing)
 
 - **One `uv.lock` and one venv** at the project root.
-- **Use `uv sync`** (not `--all-packages`): resolves the current project and its `dev` group.
+- **Use `uv sync`**: resolves the current project and its `dev` group.
 - **Run tools from the root** so they cover all code.
 - Package dependencies go in its `pyproject.toml` (`dependencies` and `dependency-groups.dev`).
 - To add dependencies: `uv add <pkg>` (runtime) or `uv add --dev <pkg>` (dev).
@@ -57,19 +54,6 @@ uv run ty check
 uv run pytest
 ```
 
-Documentation (Zensical, optional):
-
-```bash
-uv run zensical build       # build the site
-uv run zensical serve       # local preview
-```
-
-If a tool is missing, install it in the `dev` group:
-
-```bash
-uv add --dev <tool>
-```
-
 ## Agent workflow
 
 1. Before changing, read `README.md`, `pyproject.toml`, `AGENTS.md`, and related tests.
@@ -83,7 +67,7 @@ uv add --dev <tool>
 ## Code rules
 
 - Follow PEP 8 and Pythonic style with strict type annotations.
-- Use `acodo-framework` (module `acodo`) as the utility library.
+- Use module `acodo` as the utility library.
 - Google-style docstrings for public identifiers: complete, with examples when they add value.
 - For private identifiers, use brief docstrings.
 - Do not repeat obvious things in docstrings or add unnecessary examples.
@@ -122,11 +106,11 @@ def sum_numbers(a: int, b: int) -> int:
 
 - GitHub Actions on `ubuntu-latest` and `windows-latest`.
 - Minimum steps from the root:
-    - `uv sync`
-    - `uv run ruff format --check .`
-    - `uv run ruff check .`
-    - `uv run ty check`
-    - `uv run pytest`
+  - `uv sync`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run ty check`
+  - `uv run pytest`
 - Python version declared in `pyproject.toml` / `.python-version`.
 - Use `astral-sh/setup-uv` to install `uv`.
 
@@ -135,12 +119,12 @@ def sum_numbers(a: int, b: int) -> int:
 - Never commit automatically; report success and wait for confirmation.
 - Use Conventional Commits in Spanish.
 - Examples:
-    - `feat: añade cálculo de totales`
-    - `fix: corrige validación de entrada`
-    - `docs: actualiza CHANGELOG para 0.1.1`
-    - `test: cubre casos límite`
-    - `chore: bump versión a 0.2.0`
-- Atomic commit explaining the *why*, not just the *what*.
+  - `feat: añade cálculo de totales`
+  - `fix: corrige validación de entrada`
+  - `docs: actualiza CHANGELOG para 0.1.1`
+  - `test: cubre casos límite`
+  - `chore: bump versión a 0.2.0`
+- Atomic commit explaining the _why_, not just the _what_.
 - Do not mix unrelated changes.
 
 ## Definition of done
@@ -159,37 +143,24 @@ A task is done when:
 Before any `git push` with code changes:
 
 1. **Bump version** in `pyproject.toml` following SemVer:
-    - **MAJOR**: breaking changes to public API.
-    - **MINOR**: new backward-compatible functionality.
-    - **PATCH**: bug fixes, internal refactors, docs affecting published package.
+   - **MAJOR**: breaking changes to public API.
+   - **MINOR**: new backward-compatible functionality.
+   - **PATCH**: bug fixes, internal refactors, docs affecting published package.
 2. **Update `CHANGELOG.md`** (Keep a Changelog):
-    - Entries under `## [Unreleased]` while working, or promote to `## [X.Y.Z] - YYYY-MM-DD` on
-      bump.
-    - Group under `### Added`, `### Changed`, `### Fixed`, `### Removed`, `### Deprecated`,
-      `### Security`.
-    - Write in Spanish, imperative or past tense, explaining the *why*.
+   - Entries under `## [Unreleased]` while working, or promote to `## [X.Y.Z] - YYYY-MM-DD` on
+     bump.
+   - Group under `### Added`, `### Changed`, `### Fixed`, `### Removed`, `### Deprecated`,
+     `### Security`.
+   - Write in Spanish, imperative or past tense, explaining the _why_.
 3. **Lockfile consistency**: if bump changes dep constraints, update `pyproject.toml`, run
    `uv sync`, commit updated `uv.lock`.
 4. **Atomic release commit** before push:
-    - `chore: bump versión a X.Y.Z`
-    - `docs: actualiza CHANGELOG para X.Y.Z`
-      Or a single combined commit if change and release are inseparable.
+   - `chore: bump versión a X.Y.Z`
+   - `docs: actualiza CHANGELOG para X.Y.Z`
+     Or a single combined commit if change and release are inseparable.
 
 If unsure whether a change is breaking, ask the user before choosing MAJOR. When in doubt between
 PATCH and MINOR, prefer MINOR.
-
-## Using `acodo-cli`
-
-This template assumes `acodo-cli` is available (installed in the `dev` group via `uv sync`).
-
-Useful commands during development:
-
-```bash
-uv run acodo check        # Verifies project quality (ruff, ty, tests)
-uv run acodo <command>    # Other CLI commands
-```
-
-`acodo-cli` depends on `acodo-framework` at runtime; both come in the lockfile after `uv sync`.
 
 ## Limits
 
@@ -197,7 +168,7 @@ uv run acodo <command>    # Other CLI commands
 - Do not use `pip install` directly.
 - Do not use `uv sync --all-packages` (for workspaces, not standalone projects).
 - Do not add unnecessary dependencies.
-- Do not change CI, Ruff, ty, pytest, or Zensical config without justification.
+- Do not change CI, Ruff, ty or pytest without justification.
 - Do not format files unrelated to the change.
 - Do not rewrite code unnecessarily.
 - If you cannot ask, choose the minimal change and document the assumption in the commit or PR.

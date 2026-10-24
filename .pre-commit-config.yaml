@@ -5,8 +5,8 @@
 # Todos los hooks son locales y usan `uv run`, así que las versiones de las
 # herramientas salen siempre de `uv.lock`.
 
-default_install_hook_types: [ pre-commit, pre-push ]
-default_stages: [ pre-commit ]
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [pre-commit]
 
 repos:
   - repo: local
@@ -15,23 +15,23 @@ repos:
         name: ruff (formato)
         entry: uv run ruff format
         language: system
-        types: [ python ]
-        stages: [ pre-commit, pre-push ]
+        types: [python]
+        stages: [pre-commit]
 
       - id: ruff
         name: ruff (lint)
         entry: uv run ruff check --fix --exit-non-zero-on-fix
         language: system
-        types: [ python ]
-        stages: [ pre-commit, pre-push ]
+        types: [python]
+        stages: [pre-commit]
 
       - id: ty
         name: ty (tipos)
         entry: uv run ty check
         language: system
-        types: [ python ]
+        types: [python]
         pass_filenames: false
-        stages: [ pre-commit, pre-push ]
+        stages: [pre-commit]
 
       # Suite completa sin cobertura al hacer commit.
       - id: pytest
@@ -40,7 +40,7 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
-        stages: [ pre-commit ]
+        stages: [pre-commit]
 
       # Suite completa con cobertura al hacer push.
       - id: pytest-cov
@@ -49,4 +49,4 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
-        stages: [ pre-push ]
+        stages: [pre-push]
