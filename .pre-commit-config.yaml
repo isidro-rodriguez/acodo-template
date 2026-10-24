@@ -1,7 +1,7 @@
 # .pre-commit-config.yaml
-# Configuración de pre-commit para el workspace acodo.
+# Configuración de pre-commit del proyecto.
 # pre-commit: comprobaciones rápidas (formato, lint, tipos, tests sin cobertura).
-# pre-push:   además cobertura y, cuando exista, build de Zensical.
+# pre-push:   suite completa con cobertura.
 # Todos los hooks son locales y usan `uv run`, así que las versiones de las
 # herramientas salen siempre de `uv.lock`.
 
