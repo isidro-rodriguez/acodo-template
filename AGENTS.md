@@ -14,12 +14,15 @@
 
 ```bash
 .
-├── .github/                # GitHub Actions CI
-├── .pre-commit-config.yaml # pre-commit/pre-push hooks (ruff, ty, pytest, zensical)
+├── .github/                # GitHub Actions CI and Dependabot
+├── .local/                 # Private local files (backups), not tracked by git
+├── .pre-commit-config.yaml # pre-commit/pre-push hooks (ruff, ty, pytest)
 ├── AGENTS.md               # This file
+├── CHANGELOG.md            # Keep a Changelog
 ├── LICENSE                 # MIT
-├── pyproject.toml          # Project: deps, build, tools (ruff, ty, pytest, uv)
-├── README.md               # Project documentation
+├── pyproject.toml          # Project: deps, build, tools (ruff, ty, pytest, uv, poe)
+├── README.md               # Minimal project overview
+├── uv.lock                 # Lockfile, tracked by git
 ├── src/
 │   └── <package>/          # Source code (rename "acodo_template" to your name)
 │       ├── resources/      # Static assets
@@ -32,7 +35,11 @@
 
 - Every `__init__.py` must include a short docstring describing the module or package.
 - The project uses `uv` as dependency manager and build backend.
-- `acodo` is a library dependency.
+- `acodo` is the only runtime dependency, pinned with a compatible range (`acodo>=0.3,<1`)
+  so derived projects receive fixes. Raise the lower bound only when a newer `acodo` API is
+  needed.
+- `README.md` must stay minimal: what it is, installation, usage, quality commands and links.
+  Put any extra explanation in this file instead.
 
 ## Project rules (load-bearing)
 
@@ -53,6 +60,22 @@ uv run ruff check .
 uv run ty check
 uv run pytest
 ```
+
+### Optional poe tasks
+
+`[tool.poe]` in `pyproject.toml` defines shortcuts for developers who have Poe the Poet
+installed globally (`uv tool install poethepoet`). `poethepoet` is **not** a project
+dependency, and nothing (CI, hooks, docs) may require it: every task must also be runnable
+with plain `uv run`.
+
+- `executor.type = "uv"` makes poe run each task through `uv run`, so tasks use the
+  project's venv.
+- `poe check`: `ruff format --check`, `ruff check`, `ty check`, `pytest` (same as CI).
+- `poe fix`: `ruff format` and `ruff check --fix`.
+- `poe backup`: `git bundle create .local/backup-<timestamp>.bundle --all`. Written as a
+  Python `shell` task so it works on Linux and Windows without a shell dependency.
+- Keep tasks thin wrappers over existing commands. Do not add logic that only exists in poe.
+- Restore a backup with `git clone .local/<file>.bundle <dir>`.
 
 ## Agent workflow
 
@@ -106,12 +129,12 @@ def sum_numbers(a: int, b: int) -> int:
 
 - GitHub Actions on `ubuntu-latest` and `windows-latest`.
 - Minimum steps from the root:
-  - `uv sync`
+  - `uv sync --locked`
   - `uv run ruff format --check .`
   - `uv run ruff check .`
   - `uv run ty check`
   - `uv run pytest`
-- Python version declared in `pyproject.toml` / `.python-version`.
+- Python versions come from the CI matrix and `requires-python` in `pyproject.toml`.
 - Use `astral-sh/setup-uv` to install `uv`.
 
 ## Commits
