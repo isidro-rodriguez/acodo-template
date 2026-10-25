@@ -65,18 +65,8 @@ sequence = ["ruff format .", "ruff check --fix ."]
 default_item_type = "cmd"
 
 [tool.poe.tasks.backup]
-help = "Copia de seguridad del repositorio en con git bundle"
-interpreter = "python"
-shell = """
-import subprocess
-from datetime import datetime
-from pathlib import Path
-
-target = f"backup-{datetime.now():%Y%m%d-%H%M%S}.bundle"
-target.parent.mkdir(exist_ok=True)
-subprocess.run(["git", "bundle", "create", str(target), "--all"], check=True)
-print(f"Copia creada en {target}")
-"""
+help = "Copia de seguridad del repositorio con git bundle"
+cmd = "python scripts/backup.py"
 
 # --- pytest ------------------------------------------------------------------
 [tool.pytest.ini_options]
