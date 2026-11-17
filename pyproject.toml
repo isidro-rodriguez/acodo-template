@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-main = "acodo_template.main:main"
+acodo-template = "acodo_template.main:main"
 
 [dependency-groups]
 dev = [
