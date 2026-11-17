@@ -67,6 +67,8 @@ and rebuilds this file from the rules below. So:
   applies to the template goes inside `<!-- template-only:start -->` /
   `<!-- template-only:end -->` blocks (here and in `README.md`).
 - After changing the template, release it with the `python-release` skill.
+- `acodo` has no version constraint on purpose: the template always tracks the latest
+  `acodo`. Don't add one, and don't report its absence as a problem.
 <!-- template-only:end -->
 
 ### Structure
@@ -87,6 +89,8 @@ and rebuilds this file from the rules below. So:
 - Python 3.13+. `acodo` is the utility library and the only runtime dependency: use it before
   writing helpers of your own.
 - Run the app with `uv run acodo-template` or `uv run python -m acodo_template`.
+- `main.py` only prints a placeholder banner (the logo) to show the project starts; replace
+  it with the real entry point when the project gets one.
 - Every `__init__.py` has a short docstring. `README.md` stays minimal: what it is,
   installation, usage, quality commands and links.
 

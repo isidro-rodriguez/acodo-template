@@ -17,6 +17,8 @@ proyecto usa [Versionado Semántico](https://semver.org/lang/es/).
 - Bloques `template-only` en `README.md` y `AGENTS.md`: la skill `new-python-project` los
   elimina al crear un proyecto, de modo que el resultado no necesita retoques a mano.
 - El README explica cómo crear un proyecto con la skill o con `scaffold.py`.
+- `AGENTS.md` aclara que `acodo` va sin restricción de versión a propósito y que el logo
+  de `main.py` es solo un marcador para comprobar que el proyecto arranca.
 - `poe backup` usa `scripts/backup.py`, que funciona igual en Linux y Windows y deja
   `<proyecto>-<fecha>.bundle` en la raíz.
 
