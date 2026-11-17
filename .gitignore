@@ -145,3 +145,6 @@ logs/
 # Si usas frontend dentro del repo, puedes añadir: node_modules/
 # Si compartes configuración de VS Code, elimina .vscode/ o ignora solo archivos locales.
 # Si tienes código fuente en lib/ o lib64/, NO añadas esas rutas.
+
+# ─── Copias de seguridad (poe backup) ────────────────────────
+*.bundle
